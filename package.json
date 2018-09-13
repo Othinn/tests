@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "cypress": "^3.1.0"
+  },
+  "name": "tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Othinn/tests",
+  "author": "Michal Korczyński <michal.korczynski1@gmail.com>",
+  "license": "MIT"
+}
