@@ -7,5 +7,9 @@
   "main": "index.js",
   "repository": "https://github.com/Othinn/tests",
   "author": "Michal Korczyński <michal.korczynski1@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "cypress": "cypress open --env HOST=localhost,PORT=3000,PROTOCOL=https",
+    "cypress:staging": "cypress open --env HOST=www.google.com,PROTOCOL=https"
+  }
 }
