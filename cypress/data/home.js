@@ -65,29 +65,28 @@ export const portfolio = {
   ]
 };
 
+export const selectors = {
+  footerSelector: "#___gatsby > div > div:nth-child(3)"
+};
+
 export const links = [
-  // {
-  //   selector: "#home",
-  //   innerHTML: "Home",
-  //   href: "/#home"
-  // },
   {
-    selector: "#services > div",
+    innerHTML: "Home",
+    href: "/#home"
+  },
+  {
     innerHTML: "Services",
     href: "/#services"
   },
   {
-    selector: "#partners",
     innerHTML: "Partners",
     href: "/#partners"
   },
   {
-    selector: "#team",
     innerHTML: "Team",
     href: "/#team"
   },
   {
-    selector: "#pricing",
     innerHTML: "Pricing",
     href: "/#pricing"
   }
@@ -104,17 +103,13 @@ export const partnersLinks = [
   }
 ];
 
-export const footerButtons = [
-  {
-    innerHTML: "Work With Us"
-  },
-  {
-    innerHTML: "Privacy Policy"
-  }
-];
+export const openPrivacyPolicy = {
+  innerHTML: "Privacy Policy"
+};
 
-export const pricingButtons = [
+export const openFormButtons = [
   {
-    innerHTML: "Contact Us"
-  }
+    innerHTML: "CONTACT US"
+  },
+  { innerHTML: "Work With Us" }
 ];

@@ -10,9 +10,12 @@ import {
   portfolio,
   links,
   partnersLinks,
-  footerButtons,
-  pricingButtons
+  openFormButtons,
+  openPrivacyPolicy,
+  selectors
 } from "../../data/home";
+
+import { formData } from "../../data/form_data";
 
 import { getInternalURL, getExternalURL } from "../../helper";
 
@@ -31,16 +34,14 @@ describe("homepage", () => {
 
   context("Clickable elements", () => {
     it("Homepage navigation", () => {
-      links.forEach(link => {
-        cy.contains(link.innerHTML)
-          .click()
-          .then(() => {
-            // cy.get(`${link.selector}`)
-            //   .first()
-            //   .scrollIntoView()
-            //   .should("be.visible");
-            cy.url().should("contain", link.href);
-          });
+      cy.get(selectors.footerSelector).within(() => {
+        links.forEach(link => {
+          cy.contains(link.innerHTML)
+            .click()
+            .then(() => {
+              cy.url().should("contain", link.href);
+            });
+        });
       });
     });
 
@@ -49,5 +50,43 @@ describe("homepage", () => {
         cy.get(`${link.selector}`).should("have.attr", "href", link.href);
       });
     });
+
+    it("Opening and closing contact form", () => {
+      openFormButtons.forEach(link => {
+        cy.contains(link.innerHTML)
+          .click()
+          .then(() => {
+            cy.get("body > div.ReactModalPortal")
+              .should("exist")
+              .then(() => {
+                cy.contains("Close").click();
+              });
+          });
+      });
+    });
+    it("Open and close Privacy Policy", () => {
+      cy.contains(openPrivacyPolicy.innerHTML)
+        .click()
+        .then(() => {
+          cy.get("body > div.ReactModalPortal")
+            .should("exist")
+            .then(() => {
+              cy.contains("Close").click();
+            });
+        });
+    });
   });
+
+  // context("Filling forms", () => {
+  //   it("Fill short form with valid data", () => {
+  //     cy.contains(openFormButtons[1].innerHTML)
+  //       .click()
+  //       .then(() => {
+  //         cy.contains("listingForm.name")
+  //           .click()
+  //           .type(formData.string);
+  //         cy.get("email").type(formData.validEmail);
+  //       });
+  //   });
+  // });
 });
