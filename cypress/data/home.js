@@ -66,7 +66,7 @@ export const portfolio = {
 };
 
 export const selectors = {
-  footerSelector: "#___gatsby > div > div:nth-child(3)"
+  footerSelector: "#___gatsby > div > div:nth-child(4)"
 };
 
 export const links = [

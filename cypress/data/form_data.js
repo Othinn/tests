@@ -1,6 +1,6 @@
 export const formData = {
   validEmail: "test@test.com",
-  invalidEmail: "a@test.com",
+  invalidEmail: "atest.com",
   string: "adsodiabnsodb",
   tooShortString: "a",
   tooLongString:

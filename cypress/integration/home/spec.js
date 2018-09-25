@@ -15,19 +15,13 @@ import {
   selectors
 } from "../../data/home";
 
+import { formErrors } from "../../data/errors";
+
 import { formData } from "../../data/form_data";
 
 import { getInternalURL, getExternalURL } from "../../helper";
 
 const DEFAULT_URL = getInternalURL("DEFAULT_URL");
-const HOME_URL = getInternalURL("HOME_URL");
-const SERVICES_URL = getInternalURL("SERVICES_URL");
-const PARTNERS_URL = getInternalURL("PARTNERS_URL");
-const TEAM_URL = getInternalURL("TEAM_URL");
-const PRICING_URL = getInternalURL("PRICING_URL");
-
-const BITBAY_URL = getExternalURL("BITBAY_URL");
-const BITBAYPAY_URL = getExternalURL("BITBAYPAY_URL");
 
 describe("homepage", () => {
   beforeEach(() => cy.visit(DEFAULT_URL));
@@ -77,16 +71,48 @@ describe("homepage", () => {
     });
   });
 
-  // context("Filling forms", () => {
-  //   it("Fill short form with valid data", () => {
-  //     cy.contains(openFormButtons[1].innerHTML)
-  //       .click()
-  //       .then(() => {
-  //         cy.contains("listingForm.name")
-  //           .click()
-  //           .type(formData.string);
-  //         cy.get("email").type(formData.validEmail);
-  //       });
-  //   });
-  // });
+  context("Filling short form", () => {
+    it("Fill with valid data", () => {
+      cy.contains(openFormButtons[1].innerHTML)
+        .click()
+        .then(() => {
+          cy.get(`input[name="listingForm.name"]`)
+            .click()
+            .type(formData.string);
+          cy.get(`input[name="listingForm.email"]`)
+            .click()
+            .type(formData.validEmail);
+          cy.get(`input[name="listingForm.phone"]`)
+            .click()
+            .type(formData.phoneNumber);
+          cy.get(`input[name="listingForm.company"]`)
+            .click()
+            .type(formData.string);
+          cy.contains("Contact me").click();
+        });
+    });
+    it.only("Fill with invalid data", () => {
+      cy.contains(openFormButtons[1].innerHTML)
+        .click()
+        .then(() => {
+          cy.get(`input[name="listingForm.name"]`)
+            .click({ force: true })
+            .type(formData.tooShortString);
+          cy.get(`input[name="listingForm.email"]`)
+            .click({ force: true })
+            .type(formData.invalidEmail);
+          cy.get(`input[name="listingForm.company"]`)
+            .click({ force: true })
+            .type(formData.tooShortString);
+          cy.contains("Contact me").click();
+          cy.get(`input[name="listingForm.email"]`).click({ force: true });
+          cy.get("form")
+            .find()
+            .contains(formErrors.tooShortString)
+            .should("exist");
+          // .should("contain", formErrors.tooShortString)
+          // .and("contain", formErrors.invalidEmail);
+        });
+    });
+  });
 });
