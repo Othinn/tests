@@ -23,6 +23,12 @@ import { getInternalURL, getExternalURL } from "../../helper";
 
 const DEFAULT_URL = getInternalURL("DEFAULT_URL");
 
+function dataInsert(formName, enterFormData) {
+  cy.get(`input[name="listingForm.${formName}"]`)
+    .click({ force: true })
+    .type(formData.enterFormData);
+}
+
 describe("homepage", () => {
   beforeEach(() => cy.visit(DEFAULT_URL));
 
@@ -76,9 +82,7 @@ describe("homepage", () => {
       cy.contains(openFormButtons[1].innerHTML)
         .click()
         .then(() => {
-          cy.get(`input[name="listingForm.name"]`)
-            .click()
-            .type(formData.string);
+          dataInsert(name, validString)          
           cy.get(`input[name="listingForm.email"]`)
             .click()
             .type(formData.validEmail);
@@ -87,17 +91,15 @@ describe("homepage", () => {
             .type(formData.phoneNumber);
           cy.get(`input[name="listingForm.company"]`)
             .click()
-            .type(formData.string);
+            .type(formData.validString);
           cy.contains("Contact me").click();
         });
     });
-    it.only("Fill with invalid data", () => {
+    it("Fill with invalid data", () => {
       cy.contains(openFormButtons[1].innerHTML)
         .click()
         .then(() => {
-          cy.get(`input[name="listingForm.name"]`)
-            .click({ force: true })
-            .type(formData.tooShortString);
+          dataInsert(name, tooShortString)           
           cy.get(`input[name="listingForm.email"]`)
             .click({ force: true })
             .type(formData.invalidEmail);
