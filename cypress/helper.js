@@ -15,3 +15,20 @@ export const getInternalURL = urlName => {
 export const getExternalURL = urlName => {
   return external[urlName];
 };
+
+export const dataInsert = (formName, enterFormData) => {
+  cy.get(`input[name="${formName}"]`)
+    .click({ force: true })
+    .type(enterFormData);
+};
+
+export const validationErrors = (label, enterErrorData) => {
+  cy.get(`${label}`)
+    .contains(enterErrorData)
+    .should("be.visible");
+};
+
+export const emailGenerator =
+  Math.random()
+    .toString(36)
+    .substring(2, 15) + "@gmail.com";

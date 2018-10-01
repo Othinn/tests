@@ -14,20 +14,20 @@ import {
   openPrivacyPolicy,
   selectors
 } from "../../data/home";
+import { range } from "ramda";
 
 import { formErrors } from "../../data/errors";
 
 import { formData } from "../../data/form_data";
 
-import { getInternalURL, getExternalURL } from "../../helper";
+import {
+  getInternalURL,
+  getExternalURL,
+  dataInsert,
+  validationErrors
+} from "../../helper";
 
 const DEFAULT_URL = getInternalURL("DEFAULT_URL");
-
-function dataInsert(formName, enterFormData) {
-  cy.get(`input[name="listingForm.${formName}"]`)
-    .click({ force: true })
-    .type(formData.enterFormData);
-}
 
 describe("homepage", () => {
   beforeEach(() => cy.visit(DEFAULT_URL));
@@ -77,44 +77,75 @@ describe("homepage", () => {
     });
   });
 
-  context("Filling short form", () => {
+  context("Short form", () => {
+    beforeEach(() => {
+      cy.contains(openFormButtons[1].innerHTML).click();
+    });
     it("Fill with valid data", () => {
-      cy.contains(openFormButtons[1].innerHTML)
-        .click()
-        .then(() => {
-          dataInsert(name, validString)          
-          cy.get(`input[name="listingForm.email"]`)
-            .click()
-            .type(formData.validEmail);
-          cy.get(`input[name="listingForm.phone"]`)
-            .click()
-            .type(formData.phoneNumber);
-          cy.get(`input[name="listingForm.company"]`)
-            .click()
-            .type(formData.validString);
-          cy.contains("Contact me").click();
-        });
+      dataInsert("listingForm.name", formData.validString);
+      dataInsert("listingForm.email", formData.validEmail);
+      dataInsert("listingForm.phone", formData.phoneNumber);
+      dataInsert("listingForm.company", formData.validString);
+      cy.contains("Contact me").click();
     });
     it("Fill with invalid data", () => {
-      cy.contains(openFormButtons[1].innerHTML)
-        .click()
-        .then(() => {
-          dataInsert(name, tooShortString)           
-          cy.get(`input[name="listingForm.email"]`)
-            .click({ force: true })
-            .type(formData.invalidEmail);
-          cy.get(`input[name="listingForm.company"]`)
-            .click({ force: true })
-            .type(formData.tooShortString);
-          cy.contains("Contact me").click();
-          cy.get(`input[name="listingForm.email"]`).click({ force: true });
-          cy.get("form")
-            .find()
-            .contains(formErrors.tooShortString)
-            .should("exist");
-          // .should("contain", formErrors.tooShortString)
-          // .and("contain", formErrors.invalidEmail);
-        });
+      dataInsert("listingForm.name", formData.tooShortString);
+      dataInsert("listingForm.email", formData.invalidEmail);
+      dataInsert("listingForm.company", formData.tooShortString);
+      cy.contains("Contact me").click();
+      validationErrors(
+        "label:nth-child(3) > div > div > div",
+        formErrors.tooShortString
+      );
+      validationErrors(
+        "label:nth-child(4) > div > div > div",
+        formErrors.invalidEmail
+      );
+      validationErrors(
+        "label:nth-child(6) > div > div",
+        formErrors.tooShortString
+      );
+    });
+  });
+  context("Long form", () => {
+    beforeEach(() => {
+      cy.contains(openFormButtons[1].innerHTML).click();
+      cy.get("label:nth-child(2) > svg").click();
+    });
+    it("Long form required fields", () => {
+      cy.server();
+      cy.route("POST", "/form/complex").as("getReq");
+      dataInsert("listingForm.name", formData.validString);
+      dataInsert("listingForm.email", formData.validEmail);
+      dataInsert("listingForm.company", formData.validString);
+      dataInsert("listingForm.position", formData.validString);
+      cy.contains("Add file").click();
+      cy.contains("Next").click();
+      dataInsert("summaryForm.tokenName", formData.validString);
+      dataInsert("summaryForm.tokenSymbol", formData.validString);
+      dataInsert("summaryForm.website", formData.validURL);
+      dataInsert("summaryForm.whitepaper", formData.validURL);
+      cy.get("label:nth-child(1) > svg").click();
+      cy.contains("Next").click();
+      cy.contains("Next").click();
+      dataInsert("productForm.developmentProgress", formData.validString);
+      cy.get("label:nth-child(2) > svg").click();
+      range(1, 5).forEach(() => {
+        cy.contains("Next").click();
+      });
+      cy.get(
+        "div:nth-child(1) > div > div > div > div > label:nth-child(2) > svg"
+      ).click();
+      cy.contains("Next").click();
+      dataInsert("promotionsForm.feeProposal", formData.validString);
+      dataInsert("promotionsForm.proposalPrice", formData.validNumber);
+      cy.contains("Apply").click();
+      cy.wait("@getReq").then(response => {
+        expect(response.status).to.eq(200);
+      });
+      cy.get(
+        "body > div.ReactModalPortal > div > div > div > div > img"
+      ).should("be.visible");
     });
   });
 });
