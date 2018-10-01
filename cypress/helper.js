@@ -24,7 +24,7 @@ export const dataInsert = (formName, enterFormData) => {
 
 export const validationErrors = (label, enterErrorData) => {
   cy.get(`${label}`)
-    .contains(enterErrorData)
+    .contains(`${enterErrorData}`)
     .should("be.visible");
 };
 

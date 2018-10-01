@@ -16,9 +16,7 @@ import {
 } from "../../data/home";
 import { range } from "ramda";
 
-import { formErrors } from "../../data/errors";
-
-import { formData } from "../../data/form_data";
+import { formData, formErrors } from "../../data/form_data";
 
 import {
   getInternalURL,
@@ -84,7 +82,6 @@ describe("homepage", () => {
     it("Fill with valid data", () => {
       dataInsert("listingForm.name", formData.validString);
       dataInsert("listingForm.email", formData.validEmail);
-      dataInsert("listingForm.phone", formData.phoneNumber);
       dataInsert("listingForm.company", formData.validString);
       cy.contains("Contact me").click();
     });

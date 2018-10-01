@@ -1,4 +1,11 @@
-import { emailGenerator } from "../helper";
+import { emailGenerator, dataInsert, validationErrors } from "../helper";
+
+export const formErrors = {
+  tooShortString: "is too short (minimum is 3 characters)",
+  invalidEmail: "is not a valid email",
+  tooLongString: "is too long (maximum is 70 characters)",
+  isRequired: "is too short (minimum is 3 characters)"
+};
 
 export const formData = {
   validEmail: `${emailGenerator}`,
@@ -14,3 +21,37 @@ export const formData = {
   invaldNumberOfEmplyees: 99999,
   data: 11111111
 };
+
+export const firstStep = [
+  {
+    form: "listingForm.name",
+    validString: formData.validString,
+    invalidString: formData.invalidString,
+    tooLongError: formErrors.tooLongString,
+    tooShortError: formErrors.tooShortString
+  },
+  {
+    form: "listingForm.email",
+    formData: formData.validEmail,
+    validEmail: formData.validEmail,
+    invalidEmail: formErrors.invalidEmail
+  },
+  {
+    form: "listingForm.company",
+    validString: formData.validString,
+    invalidString: formErrors.invalidEmail
+  },
+  {
+    form: "listingForm.position",
+    validString: formData.validString,
+    invalidShortString: formErrors.tooLongString,
+    invalidLongString: formErrors.tooShortString,
+    invalidEmpty: formErrors.isRequired
+  }
+];
+
+export const stepTwo = [
+  {
+    form: "listingForm.name"
+  }
+];
