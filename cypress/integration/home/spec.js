@@ -16,13 +16,22 @@ import {
 } from "../../data/home";
 import { range } from "ramda";
 
-import { formData, formErrors } from "../../data/form_data";
+import {
+  formErrors,
+  data,
+  stepOne,
+  stepTwo,
+  stepFour,
+  stepNine,
+  shortForm
+} from "../../data/form_data";
 
 import {
   getInternalURL,
   getExternalURL,
   dataInsert,
-  validationErrors
+  validationErrors,
+  dataInsertError
 } from "../../helper";
 
 const DEFAULT_URL = getInternalURL("DEFAULT_URL");
@@ -80,15 +89,23 @@ describe("homepage", () => {
       cy.contains(openFormButtons[1].innerHTML).click();
     });
     it("Fill with valid data", () => {
-      dataInsert("listingForm.name", formData.validString);
-      dataInsert("listingForm.email", formData.validEmail);
-      dataInsert("listingForm.company", formData.validString);
+      cy.server();
+      cy.route("POST", "/form/simple").as("getReq");
+      shortForm.forEach(element => {
+        element.validEmail != undefined
+          ? dataInsert(`${element.form}`, element.validEmail)
+          : dataInsert(`${element.form}`, element.validString);
+      });
       cy.contains("Contact me").click();
+      cy.wait("@getReq").then(response => {
+        expect(response.status).to.eq(200);
+      });
     });
     it("Fill with invalid data", () => {
-      dataInsert("listingForm.name", formData.tooShortString);
-      dataInsert("listingForm.email", formData.invalidEmail);
-      dataInsert("listingForm.company", formData.tooShortString);
+      // dataInsertError("listingForm.name", data.tooShortString)
+      dataInsert("listingForm.name", data.tooShortString);
+      dataInsert("listingForm.email", data.invalidEmail);
+      dataInsert("listingForm.company", data.tooShortString);
       cy.contains("Contact me").click();
       validationErrors(
         "label:nth-child(3) > div > div > div",
@@ -112,20 +129,25 @@ describe("homepage", () => {
     it("Long form required fields", () => {
       cy.server();
       cy.route("POST", "/form/complex").as("getReq");
-      dataInsert("listingForm.name", formData.validString);
-      dataInsert("listingForm.email", formData.validEmail);
-      dataInsert("listingForm.company", formData.validString);
-      dataInsert("listingForm.position", formData.validString);
-      cy.contains("Add file").click();
+      stepOne.forEach(element => {
+        element.validEmail != undefined
+          ? dataInsert(`${element.form}`, element.validEmail)
+          : dataInsert(`${element.form}`, element.validString);
+      });
       cy.contains("Next").click();
-      dataInsert("summaryForm.tokenName", formData.validString);
-      dataInsert("summaryForm.tokenSymbol", formData.validString);
-      dataInsert("summaryForm.website", formData.validURL);
-      dataInsert("summaryForm.whitepaper", formData.validURL);
+      stepTwo.forEach(element => {
+        element.validURL != undefined
+          ? dataInsert(`${element.form}`, element.validURL)
+          : dataInsert(`${element.form}`, element.validString);
+      });
       cy.get("label:nth-child(1) > svg").click();
       cy.contains("Next").click();
       cy.contains("Next").click();
-      dataInsert("productForm.developmentProgress", formData.validString);
+      stepFour.forEach(element => {
+        element.validURL != undefined
+          ? dataInsert(`${element.form}`, element.validURL)
+          : dataInsert(`${element.form}`, element.validString);
+      });
       cy.get("label:nth-child(2) > svg").click();
       range(1, 5).forEach(() => {
         cy.contains("Next").click();
@@ -134,8 +156,11 @@ describe("homepage", () => {
         "div:nth-child(1) > div > div > div > div > label:nth-child(2) > svg"
       ).click();
       cy.contains("Next").click();
-      dataInsert("promotionsForm.feeProposal", formData.validString);
-      dataInsert("promotionsForm.proposalPrice", formData.validNumber);
+      stepNine.forEach(element => {
+        element.validNumber != undefined
+          ? dataInsert(`${element.form}`, element.validNumber)
+          : dataInsert(`${element.form}`, element.validString);
+      });
       cy.contains("Apply").click();
       cy.wait("@getReq").then(response => {
         expect(response.status).to.eq(200);

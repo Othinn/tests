@@ -1,5 +1,7 @@
 import { internal, external } from "./url";
 
+import { lens, path, lensProp } from "ramda";
+
 export const getInternalURL = urlName => {
   const url = internal[urlName];
 
@@ -20,6 +22,17 @@ export const dataInsert = (formName, enterFormData) => {
   cy.get(`input[name="${formName}"]`)
     .click({ force: true })
     .type(enterFormData);
+};
+
+export const dataInsertError = (formName, enterFormData, errorSelector) => {
+  const errorMessage = path(enterFormData);
+  cy.get(`input[name="${formName}"]`)
+    .focus()
+    .type(enterFormData)
+    .blur();
+  cy.get(errorSelector)
+    .should("be.visible")
+    .contains(`${errorMessage}`);
 };
 
 export const validationErrors = (label, enterErrorData) => {

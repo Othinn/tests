@@ -11,6 +11,6 @@
   "license": "MIT",
   "scripts": {
     "cypress": "cypress open --env HOST=localhost,PORT=3000,PROTOCOL=https",
-    "cypress:staging": "cypress open --env HOST=staging-ico-house.firebaseapp.com/,PROTOCOL=https"
+    "cypress:staging": "cypress open --env HOST=theicohouse.com/,PROTOCOL=https"
   }
 }
